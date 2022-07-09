@@ -1,0 +1,25 @@
+<div class="topbar">
+	<div class="navbar-start">
+		<a href="/"><button class="topbtn"><b><%= siteName %>!</b></button></a>
+	</div>
+</div>
+
+<div class="lDiv" style="text-align: center;">
+	<h1>Login to <%=siteName%></h1>
+	<% if (err) { %>
+		<script>
+			history.replaceState({},"","/login")
+		</script>
+		<div class="redAlertBox">
+			<%= err %>
+		</div>
+	<% } %>
+	<form action="/login" method="post" style="display: block;text-align: left; width: 350px;margin-right: auto;margin-left: auto;">
+		<input required placeholder="Username" name="username"><br>
+		<input required placeholder="Password" name="password" type="password"><br>
+		<button type="submit" style="margin-top: 20px;">Login</button><br>
+		<div class="nowRegisterIt">
+			Not a memelord yet? <a href="/register" style="	text-shadow: rgba(255,255,255,0.5) 1px 1px 10px;">Register an account</a>
+		</div>
+	</form>
+</div>

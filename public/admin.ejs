@@ -1,0 +1,33 @@
+<link href="/css/admin.css" rel="stylesheet">
+
+<div class="topbar">
+	<div class="navbar-start">
+		<a href="/"><button class="topbtn"><b>
+					<%= siteName %>!
+				</b></button></a>
+	</div>
+</div>
+
+<div class="bigldiv" style="text-align:center">
+	<h1>Admin</h1>
+	<div class="pendingMemes">
+		<p>There are <%= pending.length %> pending memes</p>
+
+		<% if (pending[0]) { %>
+			<div class="adminMeme">
+
+				<b><%= pending[0].title %></b><br>
+				<img src="/uploads/<%= pending[0].img %>"><br>
+				<span>
+					<%= pending[0].descr %>
+				</span><br><br>
+
+				<a href="/approve?meme=<%= encodeURIComponent(pending[0].img) %>"><button>Approve</button></a
+				><a href="/reject?meme=<%= encodeURIComponent(pending[0].img) %>"><button>Reject</button></a>
+
+			</details>
+			</div>
+		<% } %>
+
+	</div>
+</div>

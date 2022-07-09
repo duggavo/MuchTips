@@ -1,0 +1,65 @@
+<div class="topbar">
+	<div class="navbar-start">
+		<a href="/"><button class="topbtn"><b><%= siteName %>!</b></button></a>
+	</div>
+</div>
+
+<div class="lDiv" style="text-align:center">
+	<h1>Submit meme</h1>
+	<% if (err) { %>
+		<script>history.replaceState({},"","/submit")</script>
+		<div class="redAlertBox"><%= err %></div>
+	<% } %>
+
+	<h2>Rules:</h2>
+	<ul>
+		<li>No NSFW / adult imagery</li>
+		<li>No Wownero memes - please keep them to suchwow.xyz</li>
+		<li></li>
+	</ul>
+
+	<form action="/submit" method="post" encType="multipart/form-data">
+		<input required id="titleIn" name="title" type="text" placeholder="Meme title" style="width: 250px;"
+			minlength="4" maxlength="40"><br>
+		<input required name="memeimg" type="file" accept="image/*" id="uploadF">
+		<textarea id="descrIn" name="descrIn" placeholder="Meme description (optional)" maxlength="400"
+			style="width: 300px; height: 240px;"></textarea><br>
+		<button type="submit">Submit meme</button><br><br>
+	</form>
+
+	Preview<br>
+	<div class="memeDiv">
+		<div class="memeMedia">
+			<img class="memeThumb" src="/uploads/thumb.png" id="image"><br>
+			<a class="memetitle" id="memetitle"></a><br>
+			<a href="/user/<%= user %>" style="text-decoration:none;">
+				<%= user %>
+			</a><br>
+
+		</div>
+		<div id="memedescr">
+
+		</div>
+		<br>
+		<b>0wow received</b>
+	</div>
+
+	<script>
+		function fitText(string, maxLength = 53) {
+			var result = string;
+			if (result.length > maxLength + 1) {
+				result = string.substring(0, maxLength - 1) + "…";
+			}
+			return result;
+		}
+
+		document.getElementById("uploadF").onchange = function () {
+			var src = URL.createObjectURL(this.files[0])
+			document.getElementById('image').src = src
+		}
+		setInterval(() => {
+			document.getElementById("memetitle").innerText = fitText(document.getElementById("titleIn").value,);
+			document.getElementById("memedescr").innerText = fitText(document.getElementById("descrIn").value);
+		}, 100)
+	</script>
+</div>

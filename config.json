@@ -1,0 +1,12 @@
+{
+	"secret": "ENTER-SOMETHING-RANDOM-HERE",
+	"port": 4006,
+	
+	"wallet": {
+		"hostname": "127.0.0.1",
+		"port": 35612,
+		"user": "username",
+		"pass": "password"
+	},
+	"admins": ["example"]
+}

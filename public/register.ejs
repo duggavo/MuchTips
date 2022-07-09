@@ -1,0 +1,27 @@
+<div class="topbar">
+	<div class="navbar-start">
+		<a href="/"><button class="topbtn"><b><%= siteName %>!</b></button></a>
+	</div>
+</div>
+
+<div class="lDiv" style="text-align: center;">
+	<h1>Register a <%=siteName%> account</h1>
+	<% if (err) { %>
+		<script>
+			history.replaceState({},"","/register")
+		</script>
+		<div class="redAlertBox">
+			<%= err %>
+		</div>
+	<% } %>
+	<form action="/register" method="post" style="display: block;text-align: left; width: 350px;margin-right: auto;margin-left: auto;">
+		<input required placeholder="Username" name="username"><br>
+		<input required placeholder="Password" name="password" type="password"><br>
+		<input required placeholder="Repeat Password" name="password2" type="password"><br><br>
+		<img src="/captcha?<%= Math.round(Math.random()*0xffffffffff).toString(16) %>" class="captchaImg">
+		<input required placeholder="Captcha text" name="captcha" minlength="5" maxlength="5" type="text"><br>
+
+
+		<button type="submit" style="margin-top: 20px;">Register</button><br>
+	</form>
+</div>

@@ -1,0 +1,45 @@
+<div class="topbar">
+	<a href="/"><button class="topbtn"><b><%= siteName %>!</b></button></a>
+</div>
+
+<div class="bigldiv">
+	<h1><%= meme.title %></h1>
+	<img style="max-height:90vh;border-radius:4px;" src="/uploads/<%= meme.img %>">
+	<div style="margin: 20px;">
+		<%= meme.descr %>
+	</div>
+
+	<div style="margin:30px">
+		<h2>Tips</h2>
+		Vote for this meme by sending WOW to the following address:<br>
+		<div style="font-style: italic;font-family: 'Courier New', Courier, monospace;padding: 5px;"><%= addr %></div><br>
+		<img style="width:245px;height:245px;" src="https://chart.googleapis.com/chart?chs=245x245&cht=qr&chl=<%=addr%>" class="qr">
+	</div>
+	<div class="lDiv" style="max-width: 800px;">
+
+	<table style="width: 100%;margin-bottom: 100px;text-align: center;">
+		<td>
+			<h2>WOW Received</h2>
+			<% if (payIns && payIns.length > 0) { %>
+				<% for (i in payIns) { %>
+					<%= payIns[i].amount %> WOW (<a href="https://explorer.wownero.fyi/tx/<%=payIns[i].txid%>" target="_blank"><%=
+							payIns[i].txid.slice(0,8) %>...</a>) - <%= payIns[i].timeAgo %> ago<br>
+				<% } %>
+			<% } else { %>
+				No WOW received yet.
+			<% } %>
+		</td><td>
+			<h2>WOW Sent</h2>
+			<% if (payOuts && payOuts.length > 0) { %>
+				<% for (i in payOuts) { %>
+					<%=payOuts[i].amount.toFixed(4) %> WOW (<a href="https://explorer.wownero.fyi/tx/<%=payOuts[i].txid%>" target="_blank"><%=
+							payOuts[i].txid.slice(0,8) %>...</a>) - <%= payOuts[i].timeAgo %> ago<br>
+				<% } %>
+			<% } else { %>
+				No WOW sent.
+			<% } %>
+		</td>
+	</table>
+</div>
+
+</div>

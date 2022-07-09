@@ -1,0 +1,27 @@
+<div class="topbar">
+	<div class="navbar-start">
+		<a href="/"><button class="topbtn"><b><%= siteName %>!</b></button></a>
+	</div><div class="navbar-end" >
+		<a href="/account"><button class="accBtn">Account</button></a>
+
+	</div>
+</div>
+
+<div class="lDiv" style="max-width: 1030px;">
+
+	<h2>Memes by <%= username %></h2>
+
+	<% for (i in memes){ %>
+		<div class="memeDiv">
+			<div class="memeMedia">
+				<a href="/post/<%= i %>"><img src="/uploads/t_<%= memes[i].img %>" class="memeThumb"></a><br>
+				<a class="memetitle" href="/post/<%= i %>"><%= memes[i].title %></a><br>
+				<a href="/user/<%= memes[i].user %>" style="text-decoration:none;"><%= memes[i].user %></a><br>
+	
+			</div>
+			<%= memes[i].descr %><br>
+			<b><%= memes[i].amt.toPrecision(3) %>wow received</b>
+		</div>
+	<% } %><br>
+
+</div>

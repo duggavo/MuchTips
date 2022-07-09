@@ -1,0 +1,46 @@
+<div class="topbar">
+	<div class="navbar-start">
+		<a href="/"><button class="topbtn"><b><%= siteName %>!</b></button></a><a
+		href="/about"><button class="topbtn">About</button></a><a
+		href="/submit"><button class="topbtn">Submit</button></a><a
+		href="/toggle_theme?p=account"><button class="topbtn">Switch theme</button></a>	
+	</div>
+</div>
+
+<div class="lDiv" style="text-align:center">
+	<h1>Account</h1>
+
+	<% if (err) { %>
+		<script>history.replaceState({},"","/account")</script>
+		<div class="redAlertBox"><%= err %></div>
+	<% } %>
+	<% if (suc) { %>
+		<script>history.replaceState({},"","/account")</script>
+		<div class="greenAlertBox"><%= suc %></div>
+	<% } %>
+
+
+</div>
+<div class="bigldiv">
+	
+<div class="accBox">
+	<form action="/setWowAddr" method="post">
+		<input required name="addr" placeholder="WOW payout address" type="text" minlength="97" maxlength="97" value="<%= address || "" %>">
+		<button type="submit">Change address</button>
+	</form>
+</div>
+
+<div class="accBox">
+	<form action="/logout" method="post">
+		<button type="submit">Logout</button>
+	</form>
+
+</div>
+
+<% if (admin) { %>
+<div class="accBox">
+	<a href="/admin"><button>Admin Dashboard</button></a>
+</div>
+<% } %>
+
+</div>

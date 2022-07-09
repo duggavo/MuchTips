@@ -1,0 +1,53 @@
+<div class="topbar">
+	<div class="navbar-start">
+		<a href="/"><button class="topbtn"><b><%= siteName %>!</b></button></a><a
+		><button id="leaderboardsBtn" class="topbtn"><div class="lbrds">
+			<a href="/?sort=trending"><div class="leaderboardItem">Trending</div></a>
+			<a href="/?sort=best"><div class="leaderboardItem">Best</div></a>
+			<a href="/"><div class="leaderboardItem">Recent</div></a>
+
+		</div>
+		Leaderboards</button></a><a
+		href="/about"><button class="topbtn">About</button></a><a
+		href="/submit" rel="nofollow"><button class="topbtn">Submit</button></a><a
+		href="/toggle_theme" rel="nofollow"><button class="topbtn">Switch theme</button></a>	
+	</div><div class="navbar-end" >
+		<a href="/account" rel="nofollow"><button class="accBtn">Account</button></a>
+
+	</div>
+</div>
+
+<div class="lDiv" style="max-width: 1030px;">
+
+	<h2><%= memesSortText %> memes</h2>
+
+	<% if (msg) { %>
+		<script>history.replaceState({},"","/")</script>
+		<div class="greenAlertBox"><%= msg %></div>
+	<% } %>
+
+	<%
+		var min = Math.min(page * 50, memes.length);
+		var max = Math.min(min + 50, memes.length);
+
+		var canDoPrevious = page > 1
+		var canDoNext = page * 50 + 50 < (memes.length)
+	%>
+	<% for (var i = min; i < max; i++){ %>
+		<div class="memeDiv">
+			<div class="memeMedia">
+				<a href="/post/<%= i %>"><img src="/uploads/t_<%= memes[i].img %>" class="memeThumb"></a><br>
+				<a class="memetitle" href="/post/<%= i %>"><%= memes[i].title %></a><br>
+				<a href="/user/<%= memes[i].user %>" style="text-decoration:none;"><%= memes[i].user %></a><br>
+	
+			</div>
+			<%= memes[i].descr %><br>
+			<b><%= memes[i].amt.toPrecision(3) %>wow received</b>
+		</div>
+	<% } %><br>
+	<% if (canDoPrevious) { %>
+	<a href="/?page=<%= page - 1 %>" <%=canDoPrevious %> > <button>Previous</button></a>
+	<% } if (canDoNext) { %>
+	<a href="/?page=<%= page + 1 %>"><button <%= canDoNext%> >Next</button></a>
+		<% } %>
+</div>

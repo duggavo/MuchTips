@@ -1,0 +1,322 @@
+html,
+body {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+	background-color: #eee;
+	color: black;
+	font-family: "Open Sans", "Helvetica", "Arial", sans-serif;
+
+}
+a {
+	text-decoration: none;
+}
+
+.white {
+	color: white;
+}
+
+button:not(.topbtn):not(.accBtn) {
+	background-color: #ccc;
+	border: 2px solid #fff;
+	border-radius: 16px;
+	padding: 10px;
+	max-width: 80vw;
+	box-shadow: 1px 1px 4px rgba(0,0,0,0.3);
+	margin: 5px;
+	cursor: pointer;
+	color: black;
+	font-size: 15px;
+	font-family: sans-serif;
+	transition: all 0.3s;
+	min-width: 100px;
+}
+button:not(.topbtn):not(.accBtn):hover {
+	background-color: #fff;
+}
+.mn {
+	margin: auto;
+	
+	width: 88%;
+
+	padding: 10px;
+	padding-left: 5%;
+	padding-right: 5%;
+
+}
+.ctrt {
+	text-align: center;
+}
+a {
+	color: #3273dc;
+}
+input:not(.file) {
+	background: transparent;
+	background-color: rgba(255,255,255,0.8);
+	color: black;
+	border: 2px solid #777;
+	
+	margin: 7px;
+	padding: 4px;
+	border-radius: 10px;
+	transition: all 0.3s;
+	outline: none;
+	width: 200px;
+	padding: 8px;
+	text-align: left;
+}
+input:hover:not(.file) {
+	border-color: black;
+	background-color: white;
+}
+
+.file {
+	background-color: rgba(255,255,255,0.5);
+	text-align: center;
+	margin: 12px;
+	padding: 10px;
+	border-radius: 10px;
+	box-shadow: 0 0 10px rgba(0,0,0,0.2);
+	display: block;
+}
+
+
+.lInput:not(.file) {
+	width: calc(100% - 30px);
+	height: 42px;
+	text-align: left;
+	font-size: 18px;
+	padding-left: 15px;
+}
+
+.addr {
+	background-color: #fff;
+	border-radius: 5px;
+	padding: 5px;
+	user-select: all;
+	font-size: 11px;
+	font-family: monospace;
+	box-shadow: 0px 0px 10px gray;
+}
+
+.topbar {
+	width: 100%;
+	height: 40px;
+	background-color: #ddd;
+	padding: 0px;
+}
+
+.topbtn {
+	vertical-align: top;
+	background-color: transparent;
+	border: none;
+	padding: 0px;
+	padding-left: 10px;
+	padding-right: 10px;
+	box-shadow: none;
+	margin: 0px;
+	cursor: pointer;
+	font-size: 16px;
+	font-family: sans-serif;
+
+	height: 100%;
+	width: fit-content;
+	max-width: min(16%, 200px);
+}
+.topbtn:hover {
+	background-color: white;
+}
+
+.accBtn {
+	height: 100%;
+	width: 100%;
+	max-width: 200px;
+
+	vertical-align: top;
+	background-color: #34ce05;
+	color: white;
+	border: none;
+	border-radius: 10px;
+	padding: 0px;
+	box-shadow: none;
+	margin: 0px;
+	cursor: pointer;
+	font-size: 18px;
+	font-family: sans-serif;
+
+}
+.accBtn:hover {
+	background-color: #3273dc;
+	border-color: red;
+}
+
+
+.lDiv {
+	margin: auto;
+
+	max-width: 550px;
+	
+	padding: 10px;
+	padding-left: 40px;
+	padding-right: 40px;
+
+	border-radius: 8px;
+	text-align: left;
+	word-wrap: break-word;
+}
+
+@media only screen and (max-width: 770px) {
+	.mn {
+		padding-left: 4px;
+		padding-right: 4px;
+		width: 100%;
+	}
+	.topbtn {
+		font-size: 14px;
+		background: linear-gradient(to right, #eee, #bbb);
+	}
+	.topbtn:hover {
+		background: linear-gradient(to right, #fff, #999);;
+	}
+}
+
+.memeDiv {
+	background-color: white;
+	box-shadow: 1px 4px 8px rgba(0,0,0,0.2);
+	border-radius: 25px;
+	padding: 20px;
+	margin: 10px;
+	text-align:center;
+	display: inline-block;
+	height: 300px;
+	overflow: hidden;
+	width: 192px;
+}
+
+.memetitle {
+	display: block;
+	font-family: monospace;
+	max-width: 200px;
+	font-size: 20px;
+	font-weight: 600;
+	text-decoration: none;
+	word-wrap: break-word;
+}
+
+.memeMedia {
+	margin-bottom: 20px;
+}
+.memeThumb {
+	margin-bottom: 10px;
+	max-width: 200px;
+	max-height: 150px;
+}
+.navbar-start {
+	display: inline-block;
+	height: 100%;
+	width: calc(100% - 100px);
+	margin: 0;
+
+}
+.navbar-end {
+	display: inline-block;
+	width:  95px;
+	height: 100%;
+}
+
+.redAlertBox {
+	width: 100%;
+	background-color: #fd5e5e;
+	margin: 10px;
+	padding: 10px;
+	border-radius: 10px;
+	border: 2px solid #c93333;
+	color: white;
+}
+.greenAlertBox {
+	width: 100%;
+	background-color: #56bb48;
+	margin: 10px;
+	padding: 10px;
+	border-radius: 10px;
+	border: 2px solid #3ba31b;
+	color: white;
+}
+
+.nowRegisterIt {
+	padding: 10px;
+	margin-top: 20px;
+}
+.accBox {
+	display: inline-block;
+	overflow:hidden;
+	padding: 15px;
+	border-radius: 10px;
+	max-width: 40%;
+	min-width: min-content;
+	min-height: 100px;
+	margin-bottom: 10px;
+	background-color: #f0f0f0;
+	box-shadow: rgba(0,0,0,0.2) 1px 1px 10px;
+}
+.bigldiv {
+	margin: auto;
+	text-align: center;
+
+	padding: 10px;
+	padding-left: 40px;
+	padding-right: 40px;
+
+	border-radius: 8px;
+	word-wrap: break-word;
+
+}
+textarea {
+	background-color: white;
+	color: #333;
+	outline: none;
+	border: 2px solid #777;
+	border-radius: 7px;
+	margin: 10px;
+	padding: 4px;
+	resize: none;
+	font-family: "Ubuntu", "Verdana","Arial", "sans-serif";
+	font-size: 14px;
+}
+#memedescr {
+	max-width: 200px;
+	font-family: monospace;
+	height: 30px;
+}
+
+.lbrds {
+	display: none;
+	position: absolute;
+	top: 40px;
+	left: 112px;
+	background-color: white;
+	border: none;
+	border-bottom: 3px solid #c7c7c7;
+	border-radius: 4px;
+	width: 180px;
+	padding: 0px;
+}
+
+#leaderboardsBtn:hover > .lbrds {
+	display: block;
+}
+
+.qrcode {
+	margin:20px;
+	width:250px;
+	image-rendering: pixelated;
+	image-rendering: crisp-edges;
+}
+
+
+.leaderboardItem {
+	padding: 10px;
+}
+.leaderboardItem:hover {
+	background-color: #ccc;
+}

@@ -1,0 +1,98 @@
+html,
+body {
+	background-color: #222;
+	color: white;
+}
+
+.white {
+	color: black;
+}
+
+button:not(.topbtn):not(.accBtn) {
+	background-color: #252525;
+	border: 2px solid #aaa;
+	color: white;
+}
+button:not(.topbtn):not(.accBtn):hover {
+	border: 2px solid white;
+	background-color: black;
+}
+a {
+	color: #3273dc;
+}
+input:not(.file) {
+	background-color: rgba(0, 0, 0, 0.8);
+	color: white;
+	border: 2px solid #555;
+}
+input:hover:not(.file) {
+	border-color: white;
+	background-color: black;
+}
+
+.file {
+	background-color: rgba(0, 0, 0, 0.5);
+	box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+}
+
+.addr {
+	background-color: #0a0a0a;
+}
+
+.topbar {
+	background-color: rgb(24, 24, 24);
+}
+
+.topbtn {
+	color: white;
+}
+.topbtn:hover {
+	background-color: black;
+	color: white;
+}
+
+
+@media only screen and (max-width: 770px) {
+	.topbtn {
+		font-size: 16px;
+		background: linear-gradient(to right, #000, #444);
+	}
+	.topbtn:hover {
+		background: linear-gradient(to right, #bbb, #aaa);;
+	}
+}
+
+.memeDiv {
+	background-color: #0f0f0f;
+	box-shadow: none;
+}
+
+.accBox {
+	background-color: #111;
+	box-shadow: rgba(0,0,0,0.2) 1px 1px 10px;
+}
+.bigldiv {
+	margin: auto;
+	text-align: center;
+
+	padding: 10px;
+	padding-left: 40px;
+	padding-right: 40px;
+
+	border-radius: 8px;
+	word-wrap: break-word;
+
+}
+textarea {
+	background-color: rgba(0, 0, 0, 0.8);
+	color: white;
+	border: 2px solid #555;
+}
+
+.lbrds {
+	background-color: black;
+	border-bottom: 3px solid #313131;
+}
+.leaderboardItem:hover {
+	background-color: #414141;
+}
