@@ -209,6 +209,7 @@ payMemes(); setInterval(payMemes, HOUR * 10)
 module.exports = (app) => {
 
 	app.use((req,res,next)=>{
+		res.setHeader("Cache-Control", "no-cache")
 		res.setHeader("X-FRAME-OPTIONS", "deny");
 		res.setHeader("Content-Security-Policy", "default-src 'self'; img-src *;")
 		next();
@@ -225,7 +226,6 @@ module.exports = (app) => {
 
 
 	app.get("/css/style.css", (req,res)=>{
-		res.setHeader("Cache-Control", "no-cache")
 		if (req.session.darkTheme) {
 			return res.end(fs.readFileSync("./public/css/style.css").toString() + fs.readFileSync("./public/css/dark.css").toString())
 		} else {
@@ -235,6 +235,8 @@ module.exports = (app) => {
 
 
 	app.get("/", (req, res) => {
+		res.setHeader("Cache-Control", "max-age=300")
+
 
 		let pageMessages = {
 			"1": "Meme submitted and pending approval!"
@@ -273,6 +275,8 @@ module.exports = (app) => {
 	})
 
 	app.get("/post/:postid", (req, res) => {
+		res.setHeader("Cache-Control", "max-age=600")
+
 		if ( !memes[req.params.postid]) return res.status(404).end(redirectTo("/"));
 
 
@@ -283,6 +287,8 @@ module.exports = (app) => {
 		}))
 	})
 	app.get("/user/:usr", (req,res)=>{
+		res.setHeader("Cache-Control", "max-age=600")
+
 		if (!save.u[req.params.usr]) return res.status(404).end(redirectTo("/"));
 
 		let $_memes = [];
