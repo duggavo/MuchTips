@@ -14,8 +14,8 @@
 	<h2>Rules:</h2>
 	<ul>
 		<li>No NSFW / adult imagery</li>
+		<li>No super-low effort memes</li>
 		<li>No Wownero memes - please keep them to suchwow.xyz</li>
-		<li></li>
 	</ul>
 
 	<form action="/submit" method="post" encType="multipart/form-data">
@@ -30,7 +30,7 @@
 	Preview<br>
 	<div class="memeDiv">
 		<div class="memeMedia">
-			<img class="memeThumb" src="/uploads/thumb.png" id="image"><br>
+			<img class="memeThumb" src="/assets/thumb.png" id="image"><br>
 			<a class="memetitle" id="memetitle"></a><br>
 			<a href="/user/<%= user %>" style="text-decoration:none;">
 				<%= user %>
@@ -44,22 +44,5 @@
 		<b>0wow received</b>
 	</div>
 
-	<script>
-		function fitText(string, maxLength = 53) {
-			var result = string;
-			if (result.length > maxLength + 1) {
-				result = string.substring(0, maxLength - 1) + "…";
-			}
-			return result;
-		}
-
-		document.getElementById("uploadF").onchange = function () {
-			var src = URL.createObjectURL(this.files[0])
-			document.getElementById('image').src = src
-		}
-		setInterval(() => {
-			document.getElementById("memetitle").innerText = fitText(document.getElementById("titleIn").value,);
-			document.getElementById("memedescr").innerText = fitText(document.getElementById("descrIn").value);
-		}, 100)
-	</script>
+	<script src="/assets/submit.js"></script>
 </div>
