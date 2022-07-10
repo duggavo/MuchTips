@@ -40,9 +40,6 @@ const bb = require("./src/bb") // Express-BusBoy
 
 const app = express();
 
-
-
-
 bb.extend(app, {
 	limits: {
 		fieldSize: 1 * MB,
@@ -55,8 +52,6 @@ bb.extend(app, {
 	}
 })
 
-
-
 app.use(session({
 	secret: config.secret + crypto.randomInt(281474976710655).toString(36),
 	resave: true,
@@ -67,23 +62,20 @@ app.use(session({
 	cookie: {maxAge: 86400*1000} 
 }));
 
-
-
 app.set("view engine", "ejs");
 app.set("views", __dirname + "/public");
+
+if (config.use_proxy) {
+	app.enable("trust proxy")
+}
 
 app.listen(config.port,()=>{
 	console.log("Server listening on port "+config.port)
 })
 
-
-
-
 const requestPath = require("./src/requestPath");
 
 requestPath(app);
-
-
 
 app.use((err, req, res, next) => {
 	if (res.headersSent) return next(err);
