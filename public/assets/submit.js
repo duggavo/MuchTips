@@ -1,4 +1,4 @@
-function fitText(string, maxLength = 53) {
+/*function fitText(string, maxLength = 53) {
 	var result = string;
 	if (result.length > maxLength + 1) {
 		result = string.substring(0, maxLength - 1) + "…";
@@ -14,3 +14,4 @@ setInterval(() => {
 	document.getElementById("memetitle").innerText = fitText(document.getElementById("titleIn").value,);
 	document.getElementById("memedescr").innerText = fitText(document.getElementById("descrIn").value);
 }, 100)
+*/

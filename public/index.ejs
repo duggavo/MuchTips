@@ -36,8 +36,8 @@
 	<% for (var i = min; i < max; i++){ %>
 		<div class="memeDiv">
 			<div class="memeMedia">
-				<a href="/post/<%= i %>"><img src="/uploads/t_<%= memes[i].img %>" class="memeThumb"></a><br>
-				<a class="memetitle" href="/post/<%= i %>"><%= memes[i].title %></a><br>
+				<a href="/post/<%= memes[i].id %>"><img src="/uploads/t_<%= memes[i].img %>" class="memeThumb"></a><br>
+				<a class="memetitle" href="/post/<%= memes[i].id %>"><%= memes[i].title %></a><br>
 				<a href="/user/<%= memes[i].user %>" style="text-decoration:none;"><%= memes[i].user %></a><br>
 	
 			</div>

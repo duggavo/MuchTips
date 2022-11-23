@@ -154,7 +154,7 @@ input:hover:not(.file) {
 .lDiv {
 	margin: auto;
 
-	max-width: 550px;
+	max-width: 850px;
 	
 	padding: 10px;
 	padding-left: 40px;
@@ -188,7 +188,8 @@ input:hover:not(.file) {
 	margin: 10px;
 	text-align:center;
 	display: inline-block;
-	height: 300px;
+	min-height: 300px;
+	max-height: 400px;
 	overflow: hidden;
 	width: 192px;
 }
@@ -312,11 +313,18 @@ textarea {
 	image-rendering: pixelated;
 	image-rendering: crisp-edges;
 }
-
-
 .leaderboardItem {
 	padding: 10px;
 }
 .leaderboardItem:hover {
 	background-color: #ccc;
+}
+.submitBox {
+	width: 100%;
+}
+
+.paymentsTable {
+	text-align: center;
+	width: 100%;
+	margin-bottom: 20px;
 }

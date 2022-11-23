@@ -4,10 +4,11 @@
 
 <div class="bigldiv">
 	<h1><%= meme.title %></h1>
-	<img style="max-height:90vh;border-radius:4px;" src="/uploads/<%= meme.img %>">
+	Posted by <a href="/user/<%= meme.user %>"><%= meme.user %></a> at <%= formattedTime %>
 	<div style="margin: 20px;">
 		<%= meme.descr %>
 	</div>
+	<img style="max-height:90vh;border-radius:4px;" src="/uploads/<%= meme.img %>">
 
 	<div style="margin:30px">
 		<h2>Tips</h2>
@@ -15,10 +16,10 @@
 		<div style="font-style: italic;font-family: 'Courier New', Courier, monospace;padding: 5px;"><%= addr %></div><br>
 		<img style="width:245px;height:245px;" src="https://chart.googleapis.com/chart?chs=245x245&cht=qr&chl=<%=addr%>" class="qr">
 	</div>
-	<div class="lDiv" style="max-width: 800px;">
+	<div class="lDiv" style="width:100%; max-width: 800px;">
 
-	<table style="width: 100%;margin-bottom: 100px;text-align: center;">
-		<td>
+		<table class=paymentsTable>
+			<td>
 			<h2>WOW Received</h2>
 			<% if (payIns && payIns.length > 0) { %>
 				<% for (i in payIns) { %>
@@ -28,7 +29,7 @@
 			<% } else { %>
 				No WOW received yet.
 			<% } %>
-		</td><td>
+			</td><td>
 			<h2>WOW Sent</h2>
 			<% if (payOuts && payOuts.length > 0) { %>
 				<% for (i in payOuts) { %>
@@ -38,8 +39,8 @@
 			<% } else { %>
 				No WOW sent.
 			<% } %>
-		</td>
-	</table>
-</div>
+			</td>
+		</table>
+	</div>
 
 </div>

@@ -20,22 +20,17 @@
 	SOFTWARE.
 */
 
-
-
-const config = require("./config.json")
-
-
 const KB = 1024;
 const MB = 1024 * KB;
 
-
+const config = require("./config.json")
 const fs = require("fs");
 const crypto = require("crypto");
-
 const express = require("express");
-
 const session = require("express-session");
-
+const sqlite = require("better-sqlite3");
+const SqliteStore = require("better-sqlite3-session-store")(session)
+const db = new sqlite("sessions.db", { verbose: ()=>{} });
 const bb = require("./src/bb") // Express-BusBoy
 
 const app = express();
@@ -52,24 +47,37 @@ bb.extend(app, {
 	}
 })
 
-app.use(session({
+let sc = {
 	secret: config.secret + crypto.randomInt(281474976710655).toString(36),
 	resave: true,
 	saveUninitialized: true,
 	name: "sessid",
 	resave: false,
 	rolling: true,
-	cookie: {maxAge: 86400*1000} 
-}));
+	cookie: {maxAge: 86400*1000},
+	store: new SqliteStore({
+		client: db, 
+		expired: {
+			clear: true,
+			intervalMs: 900000
+		}
+	}),
+
+}
+
+app.use(session(sc));
 
 app.set("view engine", "ejs");
 app.set("views", __dirname + "/public");
 
+let bind_ip = "0.0.0.0"
+
 if (config.use_proxy) {
 	app.enable("trust proxy")
+	bind_ip = "127.0.0.1"
 }
 
-app.listen(config.port,()=>{
+app.listen(config.port, bind_ip,()=>{
 	console.log("Server listening on port "+config.port)
 })
 
