@@ -8,5 +8,6 @@
 		"user": "username",
 		"pass": "password"
 	},
-	"admins": ["example"]
+	"admins": ["example"],
+	"webhook": "a discord webhook"
 }

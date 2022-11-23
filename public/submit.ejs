@@ -15,34 +15,14 @@
 	<ul>
 		<li>No NSFW / adult imagery</li>
 		<li>No super-low effort memes</li>
-		<li>No Wownero memes - please keep them to suchwow.xyz</li>
+		<li>No Wownero/cryptocurrency memes - please post them on suchwow</li>
 	</ul>
 
 	<form action="/submit" method="post" encType="multipart/form-data">
-		<input required id="titleIn" name="title" type="text" placeholder="Meme title" style="width: 250px;"
-			minlength="4" maxlength="40"><br>
-		<input required name="memeimg" type="file" accept="image/*" id="uploadF">
-		<textarea id="descrIn" name="descrIn" placeholder="Meme description (optional)" maxlength="400"
-			style="width: 300px; height: 240px;"></textarea><br>
+		<input required class="submitBox" name=title type=text placeholder="Meme title" style="width: 350px;" minlength=4 maxlength=40><br>
+		<input required name="memeimg" class="submitBox" type="file" accept="image/*" id="uploadF">
+		<textarea id=descrIn class=submitBox name="descrIn" placeholder="Meme description (optional)" maxlength=400 ></textarea><br>
 		<button type="submit">Submit meme</button><br><br>
 	</form>
 
-	Preview<br>
-	<div class="memeDiv">
-		<div class="memeMedia">
-			<img class="memeThumb" src="/assets/thumb.png" id="image"><br>
-			<a class="memetitle" id="memetitle"></a><br>
-			<a href="/user/<%= user %>" style="text-decoration:none;">
-				<%= user %>
-			</a><br>
-
-		</div>
-		<div id="memedescr">
-
-		</div>
-		<br>
-		<b>0wow received</b>
-	</div>
-
-	<script src="/assets/submit.js"></script>
 </div>

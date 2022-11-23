@@ -20,23 +20,18 @@
 const ejs = require("ejs");
 const fs = require("fs");
 const sharp = require("sharp");
+const config = require("../config.json")
+const wallet_rpc = require("./walletRpc");
+const rateLimit = require("./rateLimit");
+const crypto = require("crypto");
+const util = require("./util")
 
 const head = fs.readFileSync("./public/template.html").toString()
-
-const config = require("../config.json")
-
-const wallet_rpc = require("./walletRpc");
-
 const wallet = new wallet_rpc(config.wallet.hostname, config.wallet.port, config.wallet.user, config.wallet.pass)
-
-const rateLimit = require("./rateLimit.js")
-
 const admins = config.admins;
-
 
 const KB = 1024;
 const MB = 1024 * KB;
-
 
 function requireLogin(req, res) {
 	if (!req.session.username) {
@@ -52,23 +47,6 @@ function illegalChar(text) {
 	return !/^[ -~]+$/.test(text)
 }
 
-function precision(num, digits) {
-	return parseFloat(num.toFixed(digits))
-}
-function genid() {
-	return Math.round((Math.round((Date.now() - 1647441423600) / 1000) + Math.random()) * 1000000).toString(36)
-}
-const crypto = require("crypto")
-function hashTxt(text, salt) {
-	var hashed = crypto.pbkdf2Sync(text, salt, 4096, 64, "sha512").toString("base64");
-	return hashed;
-}
-
-function validateShortString(str) {
-	if (!str || str.length < 4 || str.length > 100) return false;
-	return true;
-}
-
 const captcha = require("./captcha");
 
 const SECOND = 1000;
@@ -76,18 +54,6 @@ const MINUTE = SECOND * 60;
 const HOUR = MINUTE * 60;
 const DAY = HOUR * 24;
 
-function timeAgo(t) {
-	if (t > DAY * 2) {
-		return Math.round(t / DAY) + " days"
-	} else if (t > HOUR * 2) {
-		return Math.round(t / HOUR) + " hours"
-	} else if (t > MINUTE * 2) {
-		return Math.round(t / MINUTE) + " minutes"
-	} else {
-		return Math.round(t / SECOND) + " seconds"
-	}
-
-}
 // end utility functions
 
 
@@ -125,6 +91,10 @@ function savePending() {
 }
 
 let memes = JSON.parse(fs.readFileSync("./save/memes.json").toString());
+memes.sort((a, b) => {
+	return a.date - b.date
+})
+
 function saveMemes() {
 	fs.writeFileSync("./save/memes.json", JSON.stringify(memes, null, "\t"))
 }
@@ -147,20 +117,23 @@ function updateCache() {
 			let _in = {
 				...res.in,
 				...res.pending,
+				...res.pool
 			};
 			let _out = res.out;
 			for (i in _in) {
 				tips += _in[i].amount / 10 ** 11;
-				payIns.push({
-					amount: _in[i].amount / 10 ** 11,
-					timeAgo: timeAgo(Date.now() - _in[i].timestamp * 1000),
-					txid: _in[i].txid
-				})
+				if (_in[i].confirmations > 0) {
+					payIns.push({
+						amount: _in[i].amount / 10 ** 11,
+						timeAgo: util.timeAgo(Date.now() - _in[i].timestamp * 1000),
+						txid: _in[i].txid
+					})
+				}
 			}
 			for (i in _out) {
 				payOuts.push({
 					amount: _out[i].amount / 10 ** 11,
-					timeAgo: timeAgo(Date.now() - _out[i].timestamp * 1000),
+					timeAgo: util.timeAgo(Date.now() - _out[i].timestamp * 1000),
 					txid: _out[i].txid
 				})
 			}
@@ -176,12 +149,8 @@ function updateCache() {
 				memes[$x].amt = tips
 
 			})
-
 		})
-
 	}
-
-
 }
 updateCache(); setInterval(updateCache, MINUTE * 10)
 
@@ -197,6 +166,7 @@ function payMemes() {
 			})
 		}
 	}
+	updateCache();
 	setTimeout(() => {
 		wallet.store();
 	}, 10000)
@@ -205,7 +175,7 @@ payMemes(); setInterval(payMemes, HOUR * 10)
 
 module.exports = (app) => {
 
-	app.use((req,res,next)=>{
+	app.use((req, res, next) => {
 		res.setHeader("Cache-Control", "no-cache")
 		res.setHeader("X-FRAME-OPTIONS", "deny");
 		res.setHeader("Content-Security-Policy", "default-src 'self'; img-src *;")
@@ -213,7 +183,7 @@ module.exports = (app) => {
 	})
 
 	app.get("*", (req, res, next) => {
-		if (rateLimit(req,res,4)) return;
+		if (rateLimit(req, res, 4)) return;
 		if (req.url.includes("..")) {
 			return res.status(400).end("400")
 		} else {
@@ -222,14 +192,58 @@ module.exports = (app) => {
 	})
 
 
-	app.get("/css/style.css", (req,res)=>{
+	app.get("/css/style.css", (req, res) => {
 		if (req.session.darkTheme) {
 			return res.end(fs.readFileSync("./public/css/style.css").toString() + fs.readFileSync("./public/css/dark.css").toString())
 		} else {
 			return res.end(fs.readFileSync("./public/css/style.css").toString())
 		}
-	}) 
+	})
 
+	let sortedMemes = {}
+	let sortedMemesExpiration = {}
+
+	function getSortedCache(method = 0) {
+		if (sortedMemes[method] && (sortedMemesExpiration[method] >= Date.now() + 10*MINUTE)) {
+			return sortedMemes[method]
+		} else {
+			sortedMemes[method] = []
+			sortedMemesExpiration[method] = Date.now()
+
+			for (i in memes) {
+				sortedMemes[method][i] = memes[i]
+				sortedMemes[method][i].id = i;
+			}
+			if (method == 0) {
+				sortedMemes[0].sort((a, b) => {
+					var a_age = (Date.now() - a.date) / Math.max(DAY * 7, 0.1);
+					var a_score = a.amt / a_age;
+
+					var b_age = (Date.now() - b.date) / Math.max(DAY * 7, 0.1);
+					var b_score = b.amt / b_age;
+					return b_score - a_score;
+				})
+				return sortedMemes[method]
+
+			} else if (method == 1) {
+				sortedMemes[1].sort((a, b) => {
+					return b.amt - a.amt
+				})
+				return sortedMemes[method]
+			} else if (method == 2) {
+				sortedMemes[2].sort((a, b) => {
+					return b.date - a.date
+				})
+			}
+			/*memes.sort((a, b) => {
+				return a.date - b.date
+			})*/
+			return sortedMemes[method]
+
+
+
+		}
+	}
 
 	app.get("/", (req, res) => {
 		res.setHeader("Cache-Control", "max-age=300")
@@ -238,30 +252,23 @@ module.exports = (app) => {
 		let pageMessages = {
 			"1": "Meme submitted and pending approval!"
 		}
-		let $_memes = memes;
+
+
 		let memesSortText = "Latest";
-		if (req.query.sort ) {
+		if (req.query.sort) {
 			if (req.query.sort === "trending") {
-				$_memes.sort((a, b) => {
-					var a_age = (Date.now() - a.date) / (DAY * 7);
-					var a_score = a.amt / a_age;
-	
-					var b_age = (Date.now() - b.date) / (DAY * 7);
-					var b_score = b.amt / b_age;
-					return a_score > b_score;
-				})
+				$_memes = getSortedCache(0)
 				memesSortText = "Trending"
 			} else if (req.query.sort === "best") {
-				$_memes.sort((a, b) => {
-					return a.amt > b.amt
-				})
-
-				memesSortText = "Top";
+				$_memes = getSortedCache(1)
+				memesSortText = "Best"
 			} else {
 				return res.status(404).end(redirectTo("/"))
 			}
-
+		} else {
+			$_memes = getSortedCache(2)
 		}
+
 
 		return res.end(renderEjs("index", {
 			memes: $_memes,
@@ -274,16 +281,15 @@ module.exports = (app) => {
 	app.get("/post/:postid", (req, res) => {
 		res.setHeader("Cache-Control", "max-age=600")
 
-		if ( !memes[req.params.postid]) return res.status(404).end(redirectTo("/"));
-
+		if (!memes[req.params.postid]) return res.status(404).end(redirectTo("/"));
 
 		return res.end(renderEjs("meme", {
 			meme: memes[req.params.postid],
+			formattedTime: util.formatTime(memes[req.params.postid].date),
 			...memesCache[req.params.postid],
-
 		}))
 	})
-	app.get("/user/:usr", (req,res)=>{
+	app.get("/user/:usr", (req, res) => {
 		res.setHeader("Cache-Control", "max-age=600")
 
 		if (!save.u[req.params.usr]) return res.status(404).end(redirectTo("/"));
@@ -358,13 +364,13 @@ module.exports = (app) => {
 		}, "register"))
 	})
 
-	app.get("/captcha", (req,res)=>{
-		if (rateLimit(req,res,9)) return;
-		return captcha.new(req,res);
+	app.get("/captcha", (req, res) => {
+		if (rateLimit(req, res, 9)) return;
+		return captcha.new(req, res);
 	})
 
 	app.post("/register", (req, res) => {
-		if (rateLimit(req,res,99)) return;
+		if (rateLimit(req, res, 99)) return;
 
 		if (req.session.username) {
 			return res.status(200).end(redirectTo("/"))
@@ -391,7 +397,7 @@ module.exports = (app) => {
 
 		let salt = crypto.randomBytes(4).toString("hex")
 		save.u[username] = {
-			pass: hashTxt(req.body.password, salt),
+			pass: util.hashTxt(req.body.password, salt),
 			salt: salt,
 			reg: Date.now(),
 			addr: undefined,
@@ -403,7 +409,7 @@ module.exports = (app) => {
 		return res.status(200).end(redirectTo("/account"));
 	})
 	app.post("/login", (req, res) => {
-		if (rateLimit(req,res,99)) return;
+		if (rateLimit(req, res, 99)) return;
 
 		if (req.session.username) {
 			return res.status(200).end(redirectTo("/dash"))
@@ -416,13 +422,13 @@ module.exports = (app) => {
 		if (!save.u || !save.u[username]) {
 			return res.status(400).end(redirectTo("/login?e=1"))
 		}
-		if (save.u[username].pass !== hashTxt(req.body.password, save.u[username].salt)) {
+		if (save.u[username].pass !== util.hashTxt(req.body.password, save.u[username].salt)) {
 			return res.status(400).end(redirectTo("/login?e=1"))
 		}
 		req.session.username = username;
 		return res.status(200).end(redirectTo("/account"));
 	});
-	app.post("/logout", (req,res)=>{
+	app.post("/logout", (req, res) => {
 		req.session.username = undefined;
 		return res.status(200).end(redirectTo("/"))
 	})
@@ -444,9 +450,6 @@ module.exports = (app) => {
 			"3": "This meme has already been uploaded!"
 		}
 
-
-
-
 		if (requireLogin(req, res)) return;
 		return res.end(renderEjs("submit", {
 			"user": req.session.username,
@@ -459,14 +462,16 @@ module.exports = (app) => {
 		if (!req.body.title || req.body.title.length > 40 || req.body.title.length < 4 ||
 			!req.files || !req.files.memeimg || !req.files.memeimg.mimetype.startsWith("image/") ||
 			(req.body.descrIn && req.body.descrIn.length > 400)
-		) return res.status(400).end(redirectTo("/submit?e=1"));
+		) {
+			return res.status(400).end(redirectTo("/submit?e=1"));
+		}
 
 		if (req.files.memeimg.truncated == true) {
 			return res.status(400).end(redirectTo("/submit?e=2"))
 		}
 
-
-		let IMGHASH = crypto.createHash("md5").update(req.files.memeimg.file).digest("base64");
+		// ~25 characters
+		let IMGHASH = util.hexToBase36(crypto.createHash("sha3-224").update(req.files.memeimg.file).digest("hex").slice(0,32));
 
 		for (i in pendingApproval) {
 			if (pendingApproval[i].img === IMGHASH + ".jpg") {
@@ -481,7 +486,12 @@ module.exports = (app) => {
 		}
 
 
-		sharp(req.files.memeimg.file).resize({ width: 1024, height: 1024, fit: "inside" }).jpeg({
+		sharp(req.files.memeimg.file).resize({ width: 1024, height: 1024, fit: "inside" }).composite([
+			{
+				input: "./src/assets/watermark.png",
+				gravity: "southwest"
+			}
+		]).jpeg({
 			quality: 80,
 			mozjpeg: true
 		}).toFile("./public/uploads/" + IMGHASH + ".jpg");
@@ -515,10 +525,28 @@ module.exports = (app) => {
 
 		if (!req.query.meme) return res.status(400).end("Missing meme");
 
+		let d = true;
+
 		for (i in pendingApproval) {
 			if (pendingApproval[i].img === req.query.meme) {
+				d = false;
+				util.httpPost(config.webhook, {
+					content: "A wild meme has appeared on MuchTips! https://muchtips.xyz/post/"+memes.length,
+					embeds: [{
+						title: pendingApproval[i].title,
+						description: pendingApproval[i].descr,
+						author: {
+							name: pendingApproval[i].user,
+							url: "https://muchtips.xyz/user/"+pendingApproval[i].user
+						},
+						url: "https://muchtips.xyz/post/"+memes.length,
+						thumbnail: {
+							url: "https://muchtips.xyz/uploads/t_"+pendingApproval[i].img
+						}
+					}]
+				}, {})
+
 				wallet.create_account().then((xr) => {
-					console.log(JSON.stringify / (xr, null, 1))
 					if (!xr || !xr.account_index) throw new Error("Response from wallet RPC is " + xr);
 
 					wallet.store()
@@ -533,17 +561,15 @@ module.exports = (app) => {
 					savePending();
 					saveMemes();
 					updateCache();
-					return res.end(redirectTo("/admin"));
-
+					res.end(redirectTo("/admin"));
 				})
-
-
-
 			}
 		}
-		return res.end("The meme " + req.query.meme + " does not exist!")
+		if (d) {
+			return res.end("The meme " + req.query.meme + " does not exist!")
+		}
 	})
-	app.get("/refuse", (req, res) => {
+	app.get("/reject", (req, res) => {
 		if (requireLogin(req, res)) return;
 		if (!admins.includes(req.session.username)) return res.end(redirectTo("/"))
 
@@ -552,10 +578,11 @@ module.exports = (app) => {
 		for (i in pendingApproval) {
 			if (pendingApproval[i].img === req.query.meme) {
 				pendingApproval.splice(i, 1);
+				fs.unlinkSync("./public/uploads/"+req.query.meme)
+				fs.unlinkSync("./public/uploads/t_"+req.query.meme)
 				save.u[req.session.username].ref++;
 				savePending();
 				return res.end(redirectTo("/admin"));
-
 			}
 		}
 		return res.end("The meme " + req.query.meme + " does not exist!")
@@ -566,7 +593,7 @@ module.exports = (app) => {
 	})
 
 	app.use(function (req, res) {
-		res.setHeader("Cache-Control", "max-age=1800")
+		res.setHeader("Cache-Control", "max-age=3600")
 
 		var url = req.url.split("?")[0]
 		if (url.endsWith("/")) {
